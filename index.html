@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Kesehatan Tubuh | Creator Tegar Wiguna</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#10b981',
+                        secondary: '#0ea5e9',
+                        sehat: '#059669',
+                        perhatian: '#f59e0b',
+                        bahaya: '#ef4444',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .bg-gradient-sehat {
+                background: linear-gradient(135deg, #10b981 0%, #0ea5e9 100%);
+            }
+            .card-shadow {
+                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.25);
+            }
+            .input-style {
+                @apply w-full px-4 py-3 rounded-xl border border-green-200 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all;
+            }
+            .btn-gradient {
+                background: linear-gradient(90deg, #10b981 0%, #0ea5e9 100%);
+                transition: all 0.3s ease;
+            }
+            .btn-gradient:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(16, 185, 129, 0.35);
+            }
+            .logo-tw {
+                background: linear-gradient(135deg, #10b981, #0ea5e9);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .progress-bmi {
+                background: linear-gradient(to right, #10b981 0%, #f59e0b 50%, #ef4444 100%);
+            }
+        }
+    </style>
+
+    <!-- Meta Tag untuk Berbagi -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Kalkulator Kesehatan Tubuh | Creator Tegar Wiguna">
+    <meta property="og:description" content="Cek Indeks Massa Tubuh (BMI) kamu secara akurat, ketahui status berat badan dan saran kesehatan yang tepat.">
+    <meta property="og:image" content="https://i.imgur.com/8Z7XQfL.png">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body class="min-h-screen bg-gradient-sehat flex flex-col items-center justify-center p-4 font-sans">
+    
+    <div class="w-full max-w-xl">
+        <!-- Header dengan Logo -->
+        <div class="text-center mb-6 text-white">
+            <div class="flex items-center justify-center gap-3 mb-3">
+                <!-- Logo TW -->
+                <div class="bg-white p-2 rounded-full shadow-lg">
+                    <span class="text-2xl font-extrabold logo-tw">TW</span>
+                </div>
+            </div>
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-2 flex items-center justify-center gap-2">
+                <i class="fa fa-heartbeat"></i> Kalkulator Kesehatan Tubuh
+            </h1>
+            <p class="text-green-100">Cek Indeks Massa Tubuh (BMI) kamu secara akurat</p>
+        </div>
+
+        <!-- Konten Utama -->
+        <div class="bg-white rounded-2xl p-6 md:p-8 card-shadow">
+            <!-- Form Input -->
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Berat Badan (kg)</label>
+                    <input type="number" id="berat" class="input-style text-lg" placeholder="Contoh: 60" min="1" max="300" required>
+                </div>
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Tinggi Badan (cm)</label>
+                    <input type="number" id="tinggi" class="input-style text-lg" placeholder="Contoh: 165" min="50" max="250" required>
+                </div>
+            </div>
+
+            <button id="hitungBtn" class="btn-gradient w-full py-3 px-6 text-white font-semibold rounded-xl text-lg">
+                <i class="fa fa-calculator mr-2"></i> Cek Status Kesehatan
+            </button>
+
+            <!-- Hasil Perhitungan -->
+            <div id="hasil" class="hidden mt-8">
+                <div class="border-t border-green-100 pt-6 text-center">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Hasil Perhitungan BMI</h3>
+                    
+                    <div class="text-5xl font-bold mb-2" id="nilaiBMI">0</div>
+                    <p id="kategoriBMI" class="text-xl font-medium mb-4"></p>
+
+                    <!-- Garis Indikator -->
+                    <div class="w-full h-4 rounded-full progress-bmi mb-2 overflow-hidden relative">
+                        <div id="tandaPosisi" class="absolute top-0 h-full w-1 bg-white shadow-lg transition-all duration-1000"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mb-6">
+                        <span>Kurus</span>
+                        <span>Ideal</span>
+                        <span>Berlebih</span>
+                        <span>Obesitas</span>
+                    </div>
+
+                    <!-- Saran -->
+                    <div id="kotakSaran" class="p-4 rounded-xl text-left">
+                        <h4 class="font-semibold mb-2"><i class="fa fa-info-circle mr-2"></i>Saran untuk Kamu:</h4>
+                        <p id="teksSaran" class="text-sm text-gray-700"></p>
+                    </div>
+                </div>
+
+                <!-- Tombol Bagikan WhatsApp -->
+                <div class="flex gap-2 justify-center mt-8 mb-4">
+                    <a href="https://api.whatsapp.com/send?text=Cek%20kesehatan%20tubuh%20kamu%20disini:%20https://tegarwiguna18-gif.github.io/Kalkulator-Kesehatan/" target="_blank" rel="noopener noreferrer" class="bg-green-600 hover:bg-green-700 text-white font-medium px-6 py-3 rounded-xl shadow-md transition-all">
+                        <i class="fa fa-whatsapp mr-2"></i>Bagikan ke WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer dengan Nama Creator -->
+        <div class="text-center mt-6 text-white/90 text-sm space-y-1">
+            <p class="font-medium">Dibuat oleh: Creator Tegar Wiguna</p>
+            <p>© 2026 Kalkulator Kesehatan Tubuh | Semua Hak Dilindungi</p>
+            <p class="text-xs opacity-75 mt-1">*Hasil sebagai referensi umum, tidak menggantikan saran dokter profesional</p>
+        </div>
+    </div>
+
+    <script>
+        const hitungBtn = document.getElementById('hitungBtn');
+        const beratInput = document.getElementById('berat');
+        const tinggiInput = document.getElementById('tinggi');
+        const hasilDiv = document.getElementById('hasil');
+
+        // Elemen hasil
+        const nilaiBMIEl = document.getElementById('nilaiBMI');
+        const kategoriBMIEl = document.getElementById('kategoriBMI');
+        const tandaPosisiEl = document.getElementById('tandaPosisi');
+        const kotakSaranEl = document.getElementById('kotakSaran');
+        const teksSaranEl = document.getElementById('teksSaran');
+
+        hitungBtn.addEventListener('click', hitungBMI);
+        beratInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') hitungBMI(); });
+        tinggiInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') hitungBMI(); });
+
+        function hitungBMI() {
+            const berat = parseFloat(beratInput.value);
+            const tinggiCm = parseFloat(tinggiInput.value);
+
+            if (!berat || !tinggiCm || berat <= 0 || tinggiCm <= 0) {
+                alert('Silakan isi berat dan tinggi badan dengan angka yang benar!');
+                return;
+            }
+
+            // Konversi tinggi ke meter & hitung BMI
+            const tinggiM = tinggiCm / 100;
+            const bmi = (berat / (tinggiM * tinggiM)).toFixed(1);
+
+            // Tampil hasil dengan animasi
+            hasilDiv.classList.remove('hidden');
+            nilaiBMIEl.textContent = bmi;
+
+            // Tentukan kategori & warna
+            let kategori, warna, saran, posisi;
+            if (bmi < 18.5) {
+                kategori = "Berat Badan Kurang";
+                warna = "text-blue-600";
+                kotakSaranEl.className = "p-4 rounded-xl text-left bg-blue-50 text-blue-800";
+                saran = "Tingkatkan asupan nutrisi yang seimbang, perbanyak protein dan karbohidrat kompleks. Lakukan olahraga pembentuk massa otot secara rutin, dan pastikan istirahat cukup.";
+                posisi = (bmi / 35) * 100;
+            } else if (bmi < 25) {
+                kategori = "Berat Badan Ideal ✅";
+                warna = "text-sehat";
+                kotakSaranEl.className = "p-4 rounded-xl text-left bg-green-50 text-green-800";
+                saran = "Luar biasa! Pertahankan pola makan sehat dan gaya hidup aktif kamu. Terus jaga keseimbangan nutrisi dan olahraga rutin agar tubuh tetap bugar.";
+                posisi = (bmi / 35) * 100;
+            } else if (bmi < 30) {
+                kategori = "Berat Badan Berlebih";
+                warna = "text-perhatian";
+                kotakSaranEl.className = "p-4 rounded-xl text-left bg-yellow-50 text-yellow-800";
+                saran = "Kurangi konsumsi gula, makanan berminyak dan berlemak. Perbanyak sayur, buah serta air putih, dan tingkatkan aktivitas fisik minimal 30 menit sehari.";
+                posisi = (bmi / 35) * 100;
+            } else {
+                kategori = "Obesitas";
+                warna = "text-bahaya";
+                kotakSaranEl.className = "p-4 rounded-xl text-left bg-red-50 text-red-800";
+                saran = "Sebaiknya konsultasikan dengan dokter atau ahli gizi untuk menyusun program penurunan berat badan yang aman. Mulai kurangi porsi makan dan lakukan olahraga ringan secara bertahap.";
+                posisi = 100;
+            }
+
+            kategoriBMIEl.textContent = kategori;
+            kategoriBMIEl.className = `text-xl font-medium mb-4 ${warna}`;
+            teksSaranEl.textContent = saran;
+            tandaPosisiEl.style.left = `${Math.min(posisi, 98)}%`;
+
+            // Scroll ke hasil
+            hasilDiv.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+        }
+    </script>
+</body>
+</html>
